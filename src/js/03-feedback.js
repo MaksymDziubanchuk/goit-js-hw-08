@@ -38,8 +38,8 @@ function onFormSubmit(event) {
   event.currentTarget.reset();
   console.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
   localStorage.removeItem(LOCAL_STORAGE_KEY);
-  localData.email = '';
   localData.textarea = '';
+  localData.email = '';
 }
 
 function onEmailInput(event) {
