@@ -12,8 +12,8 @@ refs.textarea.addEventListener('input', throttle(onTextareaInput, 500));
 
 const LOCAL_STORAGE_KEY = 'feedback-form-state';
 
-let emailValue;
-let textareaValue;
+let emailValue = '';
+let textareaValue = '';
 
 if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
   emailValue = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)).email;
@@ -38,6 +38,8 @@ function onFormSubmit(event) {
   event.currentTarget.reset();
   console.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
   localStorage.removeItem(LOCAL_STORAGE_KEY);
+  localData.email = '';
+  localData.textarea = '';
 }
 
 function onEmailInput(event) {
