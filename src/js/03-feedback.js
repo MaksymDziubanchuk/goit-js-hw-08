@@ -6,48 +6,50 @@ const refs = {
   textarea: document.querySelector('.feedback-form textarea'),
 };
 
-refs.form.addEventListener('submit', onFormSubmit);
-refs.email.addEventListener('input', throttle(onEmailInput, 500));
-refs.textarea.addEventListener('input', throttle(onTextareaInput, 500));
-
 const LOCAL_STORAGE_KEY = 'feedback-form-state';
 
-let emailValue = '';
-let textareaValue = '';
+let emailValue;
+let textareaValue;
 
-if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
-  emailValue = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)).email;
-  textareaValue = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)).textarea;
+const formData = {};
+
+loadValues();
+updateInputs();
+
+refs.form.addEventListener('submit', onFormSubmit);
+refs.form.addEventListener('input', throttle(onFormInput, 500));
+
+function loadValues() {
+  if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
+    emailValue = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)).email;
+    textareaValue = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)).message;
+  } else {
+    emailValue = '';
+    textareaValue = '';
+  }
+  formData.email = emailValue;
+  formData.message = textareaValue;
 }
 
-if (emailValue) {
-  refs.email.value = emailValue;
+function updateInputs() {
+  if (emailValue) {
+    refs.email.value = emailValue;
+  }
+
+  if (textareaValue) {
+    refs.textarea.value = textareaValue;
+  }
 }
 
-if (textareaValue) {
-  refs.textarea.value = textareaValue;
+function onFormInput(evt) {
+  formData[evt.target.name] = evt.target.value;
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
 }
 
-const localData = {
-  email: '',
-  textarea: '',
-};
-
-function onFormSubmit(event) {
-  event.preventDefault();
-  event.currentTarget.reset();
+function onFormSubmit(evt) {
+  evt.preventDefault();
   console.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
+  evt.currentTarget.reset();
   localStorage.removeItem(LOCAL_STORAGE_KEY);
-  localData.textarea = '';
-  localData.email = '';
-}
-
-function onEmailInput(event) {
-  localData.email = event.target.value;
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localData));
-}
-
-function onTextareaInput(event) {
-  localData.textarea = event.target.value;
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localData));
+  loadValues();
 }
